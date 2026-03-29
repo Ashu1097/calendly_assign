@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Axios instance — Authorization header is injected globally by AuthContext
 const api = axios.create({
-  baseURL: 'https://calendly-assign.onrender.com',
+  baseURL: 'https://calendly-assign.onrender.com/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
