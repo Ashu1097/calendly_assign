@@ -7,6 +7,7 @@ import {
   ReactNode,
 } from 'react';
 import axios from 'axios';
+import api from '../api'; // adjust path if needed
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export interface AuthUser {
@@ -51,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // On mount: if we have a stored token, rehydrate the user
   useEffect(() => {
     if (!token) { setLoading(false); return; }
-    axios
+    api
       .get('/auth/me')
       .then((res) => setUser(res.data))
       .catch(() => {
@@ -63,14 +64,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const login = useCallback(async (email: string, password: string) => {
-    const res = await axios.post('/auth/login', { email, password });
+    const res = await api.post('/auth/login', { email, password });
     setToken(res.data.token);
     setUser(res.data.user);
   }, []);
 
   const register = useCallback(
     async (name: string, email: string, password: string, timezone = 'America/New_York') => {
-      const res = await axios.post('/auth/register', { name, email, password, timezone });
+      const res = await api.post('/auth/register', { name, email, password, timezone });
       setToken(res.data.token);
       setUser(res.data.user);
     },
