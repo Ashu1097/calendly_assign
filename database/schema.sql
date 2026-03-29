@@ -2,13 +2,14 @@
 -- Calendly Clone - PostgreSQL Database Schema
 -- =============================================
 
--- Default user (no auth required per assignment)
+-- Users (with authentication)
 CREATE TABLE IF NOT EXISTS users (
-  id          SERIAL PRIMARY KEY,
-  name        VARCHAR(100) NOT NULL DEFAULT 'Demo User',
-  email       VARCHAR(255) NOT NULL UNIQUE DEFAULT 'demo@example.com',
-  timezone    VARCHAR(100) NOT NULL DEFAULT 'America/New_York',
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id              SERIAL PRIMARY KEY,
+  name            VARCHAR(100) NOT NULL,
+  email           VARCHAR(255) NOT NULL UNIQUE,
+  password_hash   VARCHAR(255) NOT NULL,
+  timezone        VARCHAR(100) NOT NULL DEFAULT 'America/New_York',
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- Event types (e.g. "30 min meeting", "1 hr consultation")

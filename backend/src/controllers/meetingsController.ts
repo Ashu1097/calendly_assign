@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import pool from '../db/pool';
 
-const DEFAULT_USER_ID = 1;
+const uid = (req: Request): number => (req as any).userId as number;
 
 /** GET /api/meetings?type=upcoming|past */
 export const getMeetings = async (req: Request, res: Response) => {
@@ -15,7 +15,7 @@ export const getMeetings = async (req: Request, res: Response) => {
           AND m.status != 'cancelled'
           AND m.start_time ${type === 'upcoming' ? '>=' : '<'} NOW()
         ORDER BY m.start_time ${type === 'upcoming' ? 'ASC' : 'DESC'}`,
-      [DEFAULT_USER_ID]
+      [uid(req)]
     );
     res.json(rows);
   } catch {

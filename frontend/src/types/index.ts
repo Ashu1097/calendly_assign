@@ -25,12 +25,12 @@ export interface EventType {
 }
 
 export interface AvailabilitySlot {
-  id?: number;
-  user_id?: number;
+  id: number;
+  user_id: number;
   day_of_week: number;        // 0=Sun … 6=Sat
   start_time: string;         // HH:mm
   end_time: string;           // HH:mm
-  is_active?: boolean;
+  is_active: boolean;
 }
 
 export interface Meeting {

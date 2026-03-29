@@ -1,4 +1,7 @@
-import { Outlet, NavLink } from 'react-router-dom';
+import { useState } from 'react';
+import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { initials } from '../../utils';
 
 const navItems = [
   {
@@ -34,21 +37,29 @@ const navItems = [
 ];
 
 export default function AppLayout() {
+  const { user, logout } = useAuth();
+  const navigate         = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* ── Sidebar ─────────────────────────────────────────────────────────── */}
       <aside className="w-64 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col">
         {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-gray-200">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
-              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd"
-                  d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                  clipRule="evenodd" />
-              </svg>
+            <div className="flex items-center gap-2">
+              <img
+                src="/logo.png"
+                alt="Meetly"
+                className="h-32 w-auto"
+              />
+              <span className="text-lg font-bold text-gray-900"></span>
             </div>
-            <span className="text-lg font-bold text-gray-900">Calendly</span>
           </div>
         </div>
 
@@ -72,22 +83,42 @@ export default function AppLayout() {
           ))}
         </nav>
 
-        {/* User avatar area */}
-        <div className="px-4 py-4 border-t border-gray-200">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">
-              AJ
+        {/* User menu */}
+        <div className="px-4 py-4 border-t border-gray-200 relative">
+          <button
+            onClick={() => setMenuOpen((o) => !o)}
+            className="flex items-center gap-3 w-full rounded-lg hover:bg-gray-50 p-1 transition-colors"
+          >
+            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+              {user ? initials(user.name) : '?'}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">Alex Johnson</p>
-              <p className="text-xs text-gray-500 truncate">alex@example.com</p>
+            <div className="flex-1 min-w-0 text-left">
+              <p className="text-sm font-medium text-gray-900 truncate">{user?.name ?? 'User'}</p>
+              <p className="text-xs text-gray-500 truncate">{user?.email ?? ''}</p>
             </div>
-          </div>
+            <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {menuOpen && (
+            <div className="absolute bottom-full left-4 right-4 mb-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-10">
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Sign Out
+              </button>
+            </div>
+          )}
         </div>
       </aside>
 
-      {/* ── Main content ────────────────────────────────────────────────────── */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto" onClick={() => setMenuOpen(false)}>
         <Outlet />
       </main>
     </div>

@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import pool from '../db/pool';
 
-const DEFAULT_USER_ID = 1;
+const uid = (req: Request): number => (req as any).userId as number;
 
 /** GET /api/availability */
-export const getAvailability = async (_req: Request, res: Response) => {
+export const getAvailability = async (req: Request, res: Response) => {
   try {
     const { rows } = await pool.query(
       `SELECT * FROM availability WHERE user_id = $1 ORDER BY day_of_week ASC`,
-      [DEFAULT_USER_ID]
+      [uid(req)]
     );
     res.json(rows);
   } catch {
@@ -22,17 +22,17 @@ export const upsertAvailability = async (req: Request, res: Response) => {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    await client.query(`DELETE FROM availability WHERE user_id = $1`, [DEFAULT_USER_ID]);
+    await client.query(`DELETE FROM availability WHERE user_id = $1`, [uid(req)]);
     for (const slot of slots) {
       await client.query(
         `INSERT INTO availability (user_id, day_of_week, start_time, end_time, is_active)
          VALUES ($1,$2,$3,$4,$5)`,
-        [DEFAULT_USER_ID, slot.day_of_week, slot.start_time, slot.end_time, slot.is_active]
+        [uid(req), slot.day_of_week, slot.start_time, slot.end_time, slot.is_active]
       );
     }
     await client.query('COMMIT');
     const { rows } = await client.query(
-      `SELECT * FROM availability WHERE user_id=$1 ORDER BY day_of_week`, [DEFAULT_USER_ID]
+      `SELECT * FROM availability WHERE user_id=$1 ORDER BY day_of_week`, [uid(req)]
     );
     res.json(rows);
   } catch {

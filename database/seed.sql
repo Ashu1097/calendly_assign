@@ -1,10 +1,16 @@
 -- =============================================
 -- Calendly Clone - Seed Data
+-- NOTE: password_hash below is bcrypt of "password123"
 -- =============================================
 
--- Default user
-INSERT INTO users (name, email, timezone)
-VALUES ('Alex Johnson', 'alex@example.com', 'America/New_York')
+-- Default user (password: password123)
+INSERT INTO users (name, email, password_hash, timezone)
+VALUES (
+  'Alex Johnson',
+  'alex@example.com',
+  '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+  'America/New_York'
+)
 ON CONFLICT (email) DO NOTHING;
 
 -- Event types
