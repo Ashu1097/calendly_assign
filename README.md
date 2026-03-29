@@ -63,10 +63,6 @@ JWT_SECRET=your_secret_key
 
 ---
 
-## 📸 Screenshots
-
-(Add your project screenshots here)
-
 ---
 
 ## 🤝 Contributing
